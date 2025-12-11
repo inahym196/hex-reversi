@@ -14,7 +14,7 @@ const (
 
 var initBoard = [][]hexReversi.Cell{
 	//0 1  2  3  4  5  6  7  8
-	{E, E, E, E, E, E, E, E, W}, // 0
+	{E, E, E, E, E, E, E, E, E}, // 0
 	{E, E, E, E, E, E, E, E, E}, // 1
 	{E, E, E, E, E, E, E, E, E}, // 2
 	{E, E, E, W, B, E, E, E, E}, // 3
@@ -39,6 +39,21 @@ func assertBoardState(t *testing.T, board hexReversi.Board, expected [][]hexReve
 }
 
 func TestNewBoard(t *testing.T) {
+	expected := initBoard
 	board := hexReversi.NewBoard()
-	assertBoardState(t, board, initBoard)
+	assertBoardState(t, board, expected)
+}
+
+func TestBoard_PutPiece(t *testing.T) {
+	t.Run("初期ボードへ1つ置く", func(t *testing.T) {
+		board := hexReversi.NewBoard()
+		expected := initBoard
+		expected[4][4] = hexReversi.CellBlack
+
+		if err := board.PutPiece(4, 4, hexReversi.PieceBlack); err != nil {
+			t.Fatalf("expected nil, got %v", err)
+		}
+
+		assertBoardState(t, board, expected)
+	})
 }

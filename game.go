@@ -1,5 +1,14 @@
 package hexReversi
 
+import "fmt"
+
+type Piece byte
+
+const (
+	PieceBlack Piece = iota
+	PieceWhite
+)
+
 type Cell byte
 
 const (
@@ -7,6 +16,17 @@ const (
 	CellBlack
 	CellWhite
 )
+
+func cellFromPiece(p Piece) Cell {
+	switch p {
+	case PieceWhite:
+		return CellWhite
+	case PieceBlack:
+		return CellBlack
+	default:
+		panic("invalid piece")
+	}
+}
 
 func (c Cell) String() string {
 	switch c {
@@ -40,4 +60,16 @@ func NewBoard() Board {
 	board[5][3] = CellWhite
 	board[5][4] = CellBlack
 	return board
+}
+
+func (b Board) isPlaced(row, column int) bool {
+	return b[row][column] != CellEmpty
+}
+
+func (b Board) PutPiece(row, col int, piece Piece) error {
+	if b.isPlaced(row, col) {
+		return fmt.Errorf("board[%d][%d] is not empty, got %v", row, col, b[row][col])
+	}
+	b[row][col] = cellFromPiece(piece)
+	return nil
 }
