@@ -4,6 +4,8 @@ import (
 	"testing"
 
 	hexReversi "github.com/inahym196/hex-reversi"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 const (
@@ -50,10 +52,33 @@ func TestBoard_PutPiece(t *testing.T) {
 		expected := initBoard
 		expected[4][4] = hexReversi.CellBlack
 
-		if err := board.PutPiece(4, 4, hexReversi.PieceBlack); err != nil {
-			t.Fatalf("expected nil, got %v", err)
-		}
+		err := board.PutPiece(4, 4, hexReversi.PieceBlack)
+		require.NoError(t, err)
 
 		assertBoardState(t, board, expected)
+	})
+
+	t.Run("ボード外判定", func(t *testing.T) {
+		tests := []struct {
+			row, col int
+			wantErr  bool
+		}{
+			{0, 0, false}, {0, 4, false}, {4, 8, false},
+			{0, 5, true}, {1, 6, true}, {2, 7, true},
+			{3, 8, true}, {4, 9, true}, {10, 10, true},
+		}
+		for _, tt := range tests {
+			board := hexReversi.NewBoard()
+
+			if err := board.PutPiece(tt.row, tt.col, hexReversi.PieceBlack); (err != nil) != tt.wantErr {
+				t.Errorf("expected wantErr %v, got %v", tt.wantErr, err)
+			}
+		}
+	})
+
+	t.Run("配置済み判定", func(t *testing.T) {
+		board := hexReversi.NewBoard()
+		err := board.PutPiece(3, 3, hexReversi.PieceBlack)
+		assert.Error(t, err)
 	})
 }

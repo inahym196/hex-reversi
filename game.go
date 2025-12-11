@@ -42,16 +42,16 @@ func (c Cell) String() string {
 }
 
 const (
-	BoardRadius   = 4
-	BoardDiameter = BoardRadius*2 + 1
+	BoardRadius = 4
+	BoardWidth  = BoardRadius*2 + 1
 )
 
 type Board [][]Cell
 
 func NewBoard() Board {
-	board := make([][]Cell, BoardDiameter)
-	for i := range BoardDiameter {
-		board[i] = make([]Cell, BoardDiameter)
+	board := make([][]Cell, BoardWidth)
+	for i := range BoardWidth {
+		board[i] = make([]Cell, BoardWidth)
 	}
 	board[3][3] = CellWhite
 	board[3][4] = CellBlack
@@ -62,11 +62,26 @@ func NewBoard() Board {
 	return board
 }
 
+func abs(x int) int {
+	if x < 0 {
+		return -x
+	}
+	return x
+}
+
+func (b Board) isInBoard(row, col int) bool {
+	maxColumn := BoardRadius*2 - abs(BoardRadius-row)
+	return 0 <= col && col <= maxColumn
+}
+
 func (b Board) isPlaced(row, column int) bool {
 	return b[row][column] != CellEmpty
 }
 
 func (b Board) PutPiece(row, col int, piece Piece) error {
+	if !b.isInBoard(row, col) {
+		return fmt.Errorf("position(%v,%v) is out of board", row, col)
+	}
 	if b.isPlaced(row, col) {
 		return fmt.Errorf("board[%d][%d] is not empty, got %v", row, col, b[row][col])
 	}
