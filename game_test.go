@@ -50,9 +50,10 @@ func TestBoard_PutPiece(t *testing.T) {
 	t.Run("初期ボードへ1つ置く", func(t *testing.T) {
 		board := hexReversi.NewBoard()
 		expected := initBoard
-		expected[4][4] = hexReversi.CellBlack
+		expected[3][2] = hexReversi.CellBlack
+		expected[3][3] = hexReversi.CellBlack
 
-		err := board.PutPiece(4, 4, hexReversi.PieceBlack)
+		err := board.PutPiece(3, 2, hexReversi.PieceBlack)
 		require.NoError(t, err)
 
 		assertBoardState(t, board, expected)
@@ -63,7 +64,6 @@ func TestBoard_PutPiece(t *testing.T) {
 			row, col int
 			wantErr  bool
 		}{
-			{0, 0, false}, {0, 4, false}, {4, 8, false},
 			{0, 5, true}, {1, 6, true}, {2, 7, true},
 			{3, 8, true}, {4, 9, true}, {10, 10, true},
 		}
